@@ -38,10 +38,9 @@ coin
 echo ${!result[@]}
 echo ${result[@]} 
 itr=0
+declare -A percentage
 for i in "${!result[@]}"
 do
-  KeyArray[$itr]=$i
-  percentage=$(( (100*${result[$i]})/$number ))
-  percentageArray[$itr]=$percentage
-((itr++))
+  percentage[$i]=$(( (100*${result[$i]})/$number ))
 done
+sorting=$(printf "%s %s" ${percentage[@]} ${!percentage[@]} | sort -nr )
