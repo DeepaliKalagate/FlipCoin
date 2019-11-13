@@ -1,6 +1,6 @@
 #!/bin/bash -x
 
--echo "welcome"
+echo "welcome"
 read -p "How many times do you want to flip the coin : " number
 read -p "How many coins : " coin
 declare -A result
