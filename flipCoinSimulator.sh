@@ -1,33 +1,101 @@
 #!/bin/bash
-headcount=0
-tailcount=0
-declare -A flipCoinDictionary
-function flipCoinCalculator
+
+declare -A keyArr
+declare -A valArr
+declare -A result
+
+mulByHundred=100
+
+function percentage()
 {
-	echo $1
+	echo "$(( $(($1*$mulByHundred)) / $2))"
 }
-read -p "How many number of times you want to flip coin" numberOfFlips
-read -p "Enter how many number of coins you want to flip" numberOfCoins
-for(( j=1; j<=$numberOfFlips; j++ ))
-do
-	key=""
-	for(( i=1; i<=$numberOfCoins; i++ ))
+
+function coinFlipSimulation()
+{
+	for (( i=1; i<=$1; i++ ))
 	do
-		result="$( flipCoinCalculator $((RANDOM%2)) )"
-		if [ $result -eq 1 ]
-		then
-			key=$key"H"
-			headcount=$(( $headcount + 1 ))
-		else
-			key=$key"T"
-			tailcount=$(( $tailcount + 1))	
+		s=""
+  		for(( j=0; j<$2; j++ ))
+  		do
+    			coinFlip=$(( RANDOM % 2 ))
+     			if [ $coinFlip == 1 ]
+			then
+    				s=$s"H"
+        			headCount=$(( $headCount + 1 ))
+  			else
+           			s=$s"T"
+        			tailCount=$(( $tailCount + 1))
+			fi
+		done
+		echo final key : $s
+		result["$s"]=$(( ${result["$s"]} + 1 ))
+	done
+}
+
+
+function displayData()
+{
+	echo ${!result[@]}
+	echo ${result[@]}
+	elCount=${#result[@]}
+
+	index=0
+	for key in  ${!result[@]}
+	do
+		keyArr[$index]=$key
+		valArr[$index]=${result[$key]}
+		index=$(($index+1))
+	done
+
+	echo "key arr::::::::::::: ${keyArr[@]}"
+	echo "val arr::::::::::::: ${valArr[@]}"
+	for (( ind=0 ; $ind<$elCount ;ind++ ))
+	do
+		echo -e "$ind	${keyArr[$ind]}	${valArr[$ind]}"
+	done
+
+
+	for (( ind=0 ; $ind<$elCount ;ind++ ))
+	do
+	  perc="$( percentage ${valArr[$ind]} $repititions )"
+	  echo "${keyArr[$ind]}	%	=	$perc"
+	done
+
+	echo key arr before sorting : ${keyArr[@]}
+	echo val arr before sorting : ${valArr[@]}
+	for ((i = 0; i<elCount; i++))
+	do
+		jCount=$(( $elCount - 1 ))
+		for (( j=0 ; $j < $jCount ; j++ ))
+		do
+			k=$(($j+1))
+			num1="${valArr[$j]}"
+			num2="${valArr[$k]}"
+			if (( ${valArr[$j]:-0} < ${valArr[$k]:-0} ))
+			then
+				temp=${valArr[$j]}
+				valArr[$j]=${valArr[$k]}
+				valArr[$k]=$temp
+
+				temp1=${keyArr[$j]}
+	     	keyArr[$j]=${keyArr[$k]}
+	      	keyArr[$k]=$temp1
 		fi
+		done
+	done
+	for (( ind=0 ; $ind<$elCount ;ind++ ))
+	do
+		echo $ind	${keyArr[$ind]}	${valArr[$ind]}
+	done
+}
+
+read -p "Enter How much time you want to flip the coin : " repititions
+#read -p "Enter Number of coins? : " numberOfCoins
+for (( coins=1 ; $coins<4 ; coins++ ))
+do
+echo "*************COMBINATIONS FOR COINS************************"
+coinFlipSimulation $repititions $coins
+echo "*************DISPLAYING PERCENTAGES************************"
+displayData
 done
-flipCoinDictionary["$key"]=$(( ${flipCoinDictionary["$key"]} + 1 ))
-echo "final key" $key
-echo "Dictionary" ${flipCoinDictionary[@]}
-done
-echo $( printf "%s\n" ${!flipCoinDictionary[@]} ${flipCoinDictionary[@]} | sort -nr )
-maxvalue=$( printf "%s\n" ${!flipCoinDictionary[@]} ${flipCoinDictionary[@]} | sort -nr | head -1 )
-percentageOfMaxValue=$(( $maxvalue * 100 / $numberOfFlips ))
-echo $percentageOfMaxValue
