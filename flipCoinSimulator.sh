@@ -1,47 +1,33 @@
-#!/bin/bash -x
-
--echo "welcome"
-read -p "How many times do you want to flip the coin : " number
-read -p "How many coins : " coin
-declare -A result
-
-headCount=0
-tailCount=0
-tailTail=0
-headHead=0
-tailHead=0
-HeadTail=0
-
-function coin() 
+#!/bin/bash
+headcount=0
+tailcount=0
+declare -A flipCoinDictionary
+function flipCoinCalculator
 {
-	for (( i=1; i<=$number; i++ ))
-	do
-		s=""
- 	for(( j=0; j<$coin; j++ ))
- 	do
-    		resultk=$(( RANDOM % 2 ))
-
-      	if [ $resultk == 1 ]
-	then
-   		s=$s"H"
-           	headCount=$(( $headCount + 1 ))
-	else
-        	s=$s"T"
-           	tailCount=$(( $tailCount + 1))
-	fi
-done
-echo final key : $s
-result["$s"]=$(( ${result["$s"]} + 1 ))  
-
-done 
+echo $1
 }
-coin
-echo ${!result[@]}
-echo ${result[@]} 
-itr=0
-declare -A percentage
-for i in "${!result[@]}"
+read -p "How many number of times you want to flip coin" numberOfFlips
+read -p "Enter how many number of coins you want to flip" numberOfCoins
+for(( j=1; j<=$numberOfFlips; j++ ))
 do
-	percentage[$i]=$(( (100*${result[$i]})/$number ))
+key=""
+for(( i=1; i<=$numberOfCoins; i++ ))
+do
+result="$( flipCoinCalculator $((RANDOM%2)) )"
+if [ $result -eq 1 ]
+then
+key=$key"H"
+headcount=$(( $headcount + 1 ))
+else
+key=$key"T"
+tailcount=$(( $tailcount + 1))
+fi
 done
-sorting=$(printf "%s %s" ${percentage[@]} ${!percentage[@]} | sort -nr )
+flipCoinDictionary["$key"]=$(( ${flipCoinDictionary["$key"]} + 1 ))
+echo "final key" $key
+echo "Dictionary" ${flipCoinDictionary[@]}
+done
+echo $( printf "%s\n" ${!flipCoinDictionary[@]} ${flipCoinDictionary[@]} | sort -nr )
+maxvalue=$( printf "%s\n" ${!flipCoinDictionary[@]} ${flipCoinDictionary[@]} | sort -nr | head -1 )
+percentageOfMaxValue=$(( $maxvalue * 100 / $numberOfFlips ))
+echo $percentageOfMaxValue
