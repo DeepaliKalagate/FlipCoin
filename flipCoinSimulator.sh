@@ -1,8 +1,8 @@
 #!/bin/bash -x
 
-echo "Welcome to Flip The Coin"
-read -p "How many times do you want to flip the coin : " flipCoin
-read -p "How many coins( 1, 2 or 3 ) : " coin
+-echo "welcome"
+read -p "How many times do you want to flip the coin : " number
+read -p "How many coins : " coin
 declare -A result
 
 headCount=0
@@ -13,7 +13,7 @@ tailHead=0
 HeadTail=0
 
 function coin() {
-for (( i=1; i<=$flipCoin; i++ ))
+for (( i=1; i<=$number; i++ ))
 do
 s=""
  for(( j=0; j<$coin; j++ ))
@@ -32,8 +32,16 @@ fi
 echo final key : $s
 result["$s"]=$(( ${result["$s"]} + 1 ))  
 
-done
+done 
 }
 coin
 echo ${!result[@]}
-echo ${result[@]}
+echo ${result[@]} 
+itr=0
+for i in "${!result[@]}"
+do
+  KeyArray[$itr]=$i
+  percentage=$(( (100*${result[$i]})/$number ))
+  percentageArray[$itr]=$percentage
+((itr++))
+done
